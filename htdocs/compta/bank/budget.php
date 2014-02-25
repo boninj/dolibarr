@@ -48,12 +48,14 @@ print_fiche_titre($langs->trans("BankTransactionByCategories"));
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td>'.$langs->trans("Rubrique").'</td>';
+print '<td align="right">'.$langs->trans("Prevision").'</td>';
+print '<td align="right">'.$langs->trans("Difference").'</td>';
 print '<td align="right">'.$langs->trans("Nb").'</td>';
 print '<td align="right">'.$langs->trans("Total").'</td>';
 print '<td align="right">'.$langs->trans("Average").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT sum(d.amount) as somme, count(*) as nombre, c.label, c.rowid ";
+$sql = "SELECT sum(d.amount) as somme, count(*) as nombre, c.label, c.amount, c.rowid ";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_categ as c";
 $sql.= ", ".MAIN_DB_PREFIX."bank_class as l";
 $sql.= ", ".MAIN_DB_PREFIX."bank as d";
@@ -67,7 +69,7 @@ $result = $db->query($sql);
 if ($result)
 {
 	$num = $db->num_rows($result);
-	$i = 0; $total = 0; $totalnb = 0;
+	$i = 0; $total = 0; $totalnb = 0; $totalprev = 0;
 
 	$var=true;
 	while ($i < $num)
@@ -76,6 +78,8 @@ if ($result)
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
 		print "<td><a href=\"".DOL_URL_ROOT."/compta/bank/search.php?bid=$objp->rowid\">$objp->label</a></td>";
+		print '<td align="right">'.price($objp->amount)."</td>";
+		print '<td align="right">'.price($objp->amount - $objp->somme)."</td>";
 		print '<td align="right">'.$objp->nombre.'</td>';
 		print '<td align="right">'.price(abs($objp->somme))."</td>";
 		print '<td align="right">'.price(abs(price2num($objp->somme / $objp->nombre,'MT')))."</td>";
@@ -83,10 +87,14 @@ if ($result)
 		$i++;
 		$total += abs($objp->somme);
 		$totalnb += $objp->nombre;
+		$totalprev += $objp->amount;
 	}
 	$db->free($result);
 
-	print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
+	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td>';
+	print '<td align="right" class="liste_total">'.price($totalprev).'</td>';
+	print '<td align="right" class="liste_total">'.price($totalprev - $total).'</td>';
+	print '<td align="right" class="liste_total">&nbsp;</td>';
 	print '<td align="right" class="liste_total">'.price($total).'</td>';
 	print '<td align="right" colspan="2" class="liste_total">'.price($totalnb?price2num($total / $totalnb, 'MT'):0).'</td></tr>';
 }

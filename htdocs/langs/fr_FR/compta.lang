@@ -176,3 +176,4 @@ COMPTA_VAT_ACCOUNT=Code comptable par défaut de la TVA collectée
 COMPTA_VAT_BUY_ACCOUNT=Code comptable par défaut de la TVA déductible
 COMPTA_ACCOUNT_CUSTOMER=Code comptable par défaut des tiers clients
 COMPTA_ACCOUNT_SUPPLIER=Code comptable par défaut des tiers fournisseurs
+Prevision=Prévisionnel

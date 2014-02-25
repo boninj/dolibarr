@@ -46,9 +46,11 @@ if (GETPOST('add'))
 	{
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (";
 		$sql.= "label";
+		$sql.= ", amount";
 		$sql.= ", entity";
 		$sql.= ") VALUES (";
 		$sql.= "'".$db->escape(GETPOST("label"))."'";
+		$sql.= ", ".$db->escape(GETPOST("amount"));
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
@@ -70,6 +72,7 @@ if (GETPOST('update'))
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ ";
 		$sql.= "set label='".$db->escape(GETPOST("label"))."'";
+		$sql.= ", amount='".$db->escape(GETPOST("amount"))."'";
 		$sql.= " WHERE rowid = '".GETPOST('categid')."'";
 		$sql.= " AND entity = ".$conf->entity;
 
@@ -117,10 +120,10 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Ref").'</td><td colspan="2">'.$langs->trans("Label").'</td>';
+print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Label").'</td><td align="right">'.$langs->trans("Prevision").'</td><td>&nbsp;</td>';
 print "</tr>\n";
 
-$sql = "SELECT rowid, label";
+$sql = "SELECT rowid, label, amount";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
 $sql.= " WHERE entity = ".$conf->entity;
 $sql.= " ORDER BY label";
@@ -140,16 +143,18 @@ if ($result)
 		print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
 		if (GETPOST("action") == 'edit' && GETPOST("categid")== $objp->rowid)
 		{
-			print "<td colspan=2>";
+			print "<td>";
 			print '<input type="hidden" name="categid" value="'.$objp->rowid.'">';
 			print '<input name="label" type="text" size=45 value="'.$objp->label.'">';
 			print '<input type="submit" name="update" class="button" value="'.$langs->trans("Edit").'">';
-
 			print "</td>";
+
+			print '<td align="right"><input name="amount" type="text" size=15 value="'.$objp->amount.'"></td>';
 		}
 		else
 		{
-			print "<td >".$objp->label."</td>";
+			print "<td>".$objp->label."</td>";
+			print '<td align="right">'.price($objp->amount)."</td>";
 			print '<td style="text-align: center;">';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit">'.img_edit().'</a>&nbsp;&nbsp;';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a></td>';
@@ -170,6 +175,7 @@ if ($action != 'edit')
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
 	print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
+	print '<td align="right"><input name="amount" type="text" size=15></td>';
 	print '<td align="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 }
