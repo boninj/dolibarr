@@ -41,6 +41,7 @@ class BankCateg // extends CommonObject
 
     var $id;
     var $label;
+    var $amount;
 
 
     /**
@@ -79,6 +80,7 @@ class BankCateg // extends CommonObject
         $sql.= ", entity";
         $sql.= ") VALUES (";
         $sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'")."";
+        $sql.= ", ".(! isset($this->amount)?'NULL':"'".$this->db->escape($this->amount)."'")."";
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -138,6 +140,7 @@ class BankCateg // extends CommonObject
         $sql = "SELECT";
         $sql.= " t.rowid,";
         $sql.= " t.label";
+        $sql.= " t.amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_categ as t";
         $sql.= " WHERE t.rowid = ".$id;
         $sql.= " AND t.entity = ".$conf->entity;
@@ -152,6 +155,7 @@ class BankCateg // extends CommonObject
 
                 $this->id    = $obj->rowid;
                 $this->label = $obj->label;
+                $this->amount = $obj->amount;
             }
             $this->db->free($resql);
 
@@ -187,6 +191,7 @@ class BankCateg // extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ SET";
         $sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null")."";
+        $sql.= ",amount=".(isset($this->amount)?"'".$this->db->escape($this->amount)."'":"null")."";
         $sql.= " WHERE rowid=".$this->id;
         $sql.= " AND entity = ".$conf->entity;
 
@@ -356,6 +361,7 @@ class BankCateg // extends CommonObject
         $this->id=0;
 
         $this->label='';
+        $this->amount='';
     }
 
 }
